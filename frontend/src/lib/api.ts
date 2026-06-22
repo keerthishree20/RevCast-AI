@@ -6,6 +6,7 @@ import type {
   SummaryResponse,
   OptimizeResponse,
   CalibrationResponse,
+  ComparisonResponse,
   BudgetInputs,
   HorizonDays,
 } from "./types";
@@ -76,6 +77,13 @@ export function apiCalibration(
   holdout_weeks = 8,
 ): Promise<CalibrationResponse> {
   return post("/api/calibration", { session_id, holdout_weeks });
+}
+
+export function apiComparison(
+  session_id: string,
+  holdout_weeks = 8,
+): Promise<ComparisonResponse> {
+  return post("/api/comparison", { session_id, holdout_weeks });
 }
 
 export function apiOptimize(

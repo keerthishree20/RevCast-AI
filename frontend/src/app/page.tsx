@@ -9,6 +9,7 @@ import ForecastSummaryCard from "@/components/forecast/ForecastSummaryCard";
 import ChannelBreakdownTable from "@/components/forecast/ChannelBreakdownTable";
 import SeasonalityHeatmap from "@/components/forecast/SeasonalityHeatmap";
 import CalibrationTimeMachine from "@/components/forecast/CalibrationTimeMachine";
+import ModelComparisonPanel from "@/components/forecast/ModelComparisonPanel";
 import DiminishingReturnsChart from "@/components/forecast/DiminishingReturnsChart";
 import ChannelRadarChart from "@/components/forecast/ChannelRadarChart";
 import RevenueWaterfall from "@/components/forecast/RevenueWaterfall";
@@ -173,6 +174,7 @@ export default function Home() {
             <SeasonalityHeatmap />
             <AutoInsights />
             <CalibrationTimeMachine />
+            <ModelComparisonPanel />
             {forecast.anomalies.length > 0 && (
               <Card
                 title={`${forecast.anomalies.length} Anomalies Detected`}

@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from api.routes import ingest, validate, forecast, simulate, summary, optimize, calibration
+from api.routes import ingest, validate, forecast, simulate, summary, optimize, calibration, comparison, auth
 
 app = FastAPI(title="Revenue Forecasting API", version="1.0.0")
 
@@ -22,6 +22,8 @@ app.include_router(simulate.router, prefix="/api")
 app.include_router(summary.router,  prefix="/api")
 app.include_router(optimize.router, prefix="/api")
 app.include_router(calibration.router, prefix="/api")
+app.include_router(comparison.router, prefix="/api")
+app.include_router(auth.router, prefix="/api")
 
 
 @app.get("/health")

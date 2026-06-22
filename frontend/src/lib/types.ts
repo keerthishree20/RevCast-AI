@@ -121,6 +121,32 @@ export interface OptimizeResponse {
   efficient_frontier: FrontierPoint[];
 }
 
+export interface ComparisonPrediction {
+  week: string;
+  actual: number;
+  predicted: number;
+  p10: number;
+  p90: number;
+  hit: boolean;
+}
+
+export interface ComparisonModelResult {
+  model_name: string;
+  mape_pct: number;
+  rmse: number;
+  coverage_pct: number;
+  predictions: ComparisonPrediction[];
+}
+
+export interface ComparisonResponse {
+  holdout_weeks: number;
+  channels: Record<string, ComparisonModelResult[]>;
+  overall_elasticity: {
+    coverage_pct: number;
+    mape_pct: number;
+  };
+}
+
 export interface CalibrationWeekRow {
   week: string;
   actual: number;
