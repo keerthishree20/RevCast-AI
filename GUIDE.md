@@ -1,5 +1,7 @@
 # RevCast AI — Complete Guide (Zero to Advanced)
 
+> **Live Demo:** [https://revcast-frontend.onrender.com](https://revcast-frontend.onrender.com) | **GitHub:** [https://github.com/keerthishree20/RevCast-AI](https://github.com/keerthishree20/RevCast-AI)
+
 A comprehensive guide to understanding every concept, feature, and technical decision in RevCast AI. Written so anyone — from a business student to a senior data scientist — can follow along.
 
 ---
@@ -17,7 +19,8 @@ A comprehensive guide to understanding every concept, feature, and technical dec
 9. [Architecture Deep Dive](#9-architecture-deep-dive)
 10. [Advanced Topics](#10-advanced-topics)
 11. [Troubleshooting](#11-troubleshooting)
-12. [Glossary](#12-glossary)
+12. [Deployment](#12-deployment)
+13. [Glossary](#13-glossary)
 
 ---
 
@@ -639,20 +642,28 @@ These insights come from deterministic rules analyzing the forecast response —
 │  Next.js 14     │ ◄───────────────► │  FastAPI          │
 │  (React 18)     │     Port 3000      │  (Python)         │
 │  TypeScript     │                    │  Port 8001        │
-│  Tailwind CSS   │                    │  In-memory state  │
-│  Recharts       │                    │  No database      │
+│  Tailwind CSS   │                    │  SQLite (users)   │
+│  Recharts       │                    │  In-memory (data) │
 └─────────────────┘                    └──────────────────┘
 ```
 
-### 9.2 Backend — No Database
+### 9.2 Backend — Hybrid Storage
 
-The backend uses **in-memory sessions** — a Python dictionary keyed by UUID. This means:
+The backend uses two storage layers:
+- **SQLite database** (`state/database.py`) — persistent storage for user accounts (survives restarts)
+- **In-memory sessions** (`state/session.py`) — fast storage for uploaded data and fitted models (lost on restart)
 
-- **Fast:** No database queries, no ORM overhead
-- **Simple:** No migrations, no connection pools
-- **Trade-off:** Restarting the server loses all sessions
+This hybrid approach keeps the forecasting pipeline fast (no database I/O for large DataFrames) while persisting user accounts properly.
 
-This is appropriate for a hackathon prototype. A production version would use Redis or PostgreSQL.
+### 9.2.1 Authentication Flow
+
+```
+Register → PBKDF2 hash password → Store in SQLite → Return JWT token
+Login    → Verify password hash → Return JWT token
+Frontend → Store token in localStorage → Send with future requests
+```
+
+JWT tokens use HMAC-SHA256 signing with a configurable secret key and 24-hour expiry.
 
 ### 9.3 Session State Flow
 
@@ -804,7 +815,96 @@ To use RevCast AI with real data:
 
 ---
 
-## 12. Glossary
+## 12. Deployment
+
+### 12.1 Local Development (All Commands)
+
+| Task | Command |
+|------|---------|
+| Generate sample data | `python data/generate_synthetic.py` |
+| Start backend | `cd backend && pip install -r requirements.txt && python -m uvicorn main:app --host 0.0.0.0 --port 8001 --reload` |
+| Start frontend | `cd frontend && npm install && npm run dev` |
+| Start frontend (custom port) | `cd frontend && npm run dev -- -p 3010` |
+| Run tests | `cd backend && python -m pytest tests/ -v` |
+| Build frontend for production | `cd frontend && npm run build && npm start` |
+| Health check | `curl http://localhost:8001/health` |
+| Stop backend | `pkill -f 'uvicorn main:app'` |
+| Stop frontend | `pkill -f 'next dev'` |
+
+### 12.2 Docker
+
+```bash
+# Start both services
+docker-compose up --build
+
+# Backend: http://localhost:8001
+# Frontend: http://localhost:3000
+
+# Stop
+docker-compose down
+```
+
+### 12.3 Deploy to Render.com (Cloud)
+
+RevCast AI is deployed live at:
+- **Frontend:** https://revcast-frontend.onrender.com
+- **Backend API:** https://revcast-api.onrender.com
+
+To deploy your own copy:
+
+1. **Fork** the repo on GitHub
+2. Go to [render.com](https://render.com) → sign in with GitHub
+3. Click **"New"** → **"Blueprint"**
+4. Select your forked repo
+5. Render reads `render.yaml` and creates 2 services automatically
+6. Click **"Apply"** — builds take ~5 minutes
+
+**What `render.yaml` configures:**
+
+```yaml
+services:
+  - revcast-api (Python, FastAPI)
+    - Installs requirements.txt
+    - Runs: uvicorn main:app --host 0.0.0.0 --port $PORT
+    - Health check: /health
+    - Env: GEMINI_API_KEY, JWT_SECRET, CORS_ORIGINS
+
+  - revcast-frontend (Node.js, Next.js)
+    - Runs: npm install && npm run build
+    - Starts: npm start
+    - Env: NEXT_PUBLIC_API_URL → points to backend
+```
+
+**After deployment — update these env vars on the Render dashboard:**
+
+| Service | Variable | Set to |
+|---------|----------|--------|
+| Backend | `CORS_ORIGINS` | Your frontend URL (e.g., `https://revcast-frontend.onrender.com`) |
+| Frontend | `NEXT_PUBLIC_API_URL` | Your backend URL (e.g., `https://revcast-api.onrender.com`) |
+| Backend | `GEMINI_API_KEY` | Your Google Gemini key (optional — only for AI summaries) |
+
+### 12.4 Deploy Frontend to Vercel (Alternative)
+
+If you prefer Vercel for the frontend:
+
+1. Go to [vercel.com](https://vercel.com) → import your GitHub repo
+2. Set root directory to `frontend`
+3. Add env var: `NEXT_PUBLIC_API_URL` = your Render backend URL
+4. Deploy — Vercel auto-detects Next.js
+
+The repo includes `frontend/vercel.json` for this purpose.
+
+### 12.5 Free Tier Limitations
+
+On Render's free tier:
+- Services **sleep after 15 minutes** of inactivity
+- First request after sleep takes **~50 seconds** (cold start)
+- SQLite database resets on redeploy (users need to re-register)
+- Upgrade to paid ($7/month per service) for always-on + persistent disk
+
+---
+
+## 13. Glossary
 
 | Term | Definition |
 |------|-----------|
