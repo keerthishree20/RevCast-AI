@@ -2,8 +2,13 @@
 
 import json
 import os
-from google import genai
-from google.genai import types as genai_types
+
+try:
+    from google import genai
+    from google.genai import types as genai_types
+    HAS_GENAI = True
+except ImportError:
+    HAS_GENAI = False
 
 
 def _build_prompt(ctx: dict) -> str:
@@ -84,6 +89,9 @@ def _compute_historical_kpis(session_data: dict) -> dict:
 
 
 def generate_summary(session_data: dict, forecast_result, simulation_results: list) -> dict:
+    if not HAS_GENAI:
+        raise ValueError("google-genai package not installed. AI summaries are unavailable.")
+
     api_key = os.environ.get("GEMINI_API_KEY", "")
     if not api_key:
         raise ValueError("GEMINI_API_KEY not set in environment")
