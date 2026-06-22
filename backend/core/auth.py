@@ -1,4 +1,4 @@
-"""JWT authentication: register, login, token verification."""
+"""JWT authentication: register, login, token verification — backed by SQLite."""
 
 import os
 import hashlib
@@ -8,11 +8,10 @@ import json
 import base64
 from typing import Optional
 
+from state.database import create_user, get_user
+
 SECRET_KEY = os.getenv("JWT_SECRET", "revcast-dev-secret-change-in-production")
 TOKEN_EXPIRY = 86400  # 24 hours
-
-# In-memory user store (swap for DB in production)
-_users: dict[str, dict] = {}
 
 
 def _hash_password(password: str) -> str:
@@ -27,19 +26,16 @@ def _verify_password(password: str, stored: str) -> bool:
     return hmac.compare_digest(check, hashed)
 
 
-def register_user(email: str, name: str, password: str) -> dict:
-    if email in _users:
+def register_user_action(email: str, name: str, password: str) -> dict:
+    pw_hash = _hash_password(password)
+    success = create_user(email, name, pw_hash)
+    if not success:
         raise ValueError("Email already registered")
-    _users[email] = {
-        "email": email,
-        "name": name,
-        "password_hash": _hash_password(password),
-    }
     return {"email": email, "name": name}
 
 
 def authenticate_user(email: str, password: str) -> Optional[dict]:
-    user = _users.get(email)
+    user = get_user(email)
     if not user:
         return None
     if not _verify_password(password, user["password_hash"]):

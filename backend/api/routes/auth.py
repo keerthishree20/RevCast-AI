@@ -3,7 +3,7 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, EmailStr
 
-from core.auth import register_user, authenticate_user, create_token
+from core.auth import register_user_action, authenticate_user, create_token
 
 router = APIRouter()
 
@@ -22,7 +22,7 @@ class LoginRequest(BaseModel):
 @router.post("/auth/register")
 def register(req: RegisterRequest):
     try:
-        user = register_user(req.email, req.name, req.password)
+        user = register_user_action(req.email, req.name, req.password)
         token = create_token(user["email"], user["name"])
         return {"user": user, "token": token}
     except ValueError as e:

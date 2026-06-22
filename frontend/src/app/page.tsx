@@ -1,5 +1,7 @@
 "use client";
 
+import { useAuth } from "@/context/AuthContext";
+import AuthPage from "@/components/auth/AuthPage";
 import { useApp } from "@/context/AppContext";
 import FileUploadZone from "@/components/upload/FileUploadZone";
 import ValidationStatus from "@/components/upload/ValidationStatus";
@@ -36,7 +38,18 @@ const PILLS = [
 ];
 
 export default function Home() {
+  const { user, loading: authLoading, logout } = useAuth();
   const { step, goToStep, runForecast, runSimulate, loading, error, forecast } = useApp();
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full" />
+      </div>
+    );
+  }
+
+  if (!user) return <AuthPage />;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -46,10 +59,22 @@ export default function Home() {
         <div className="max-w-5xl mx-auto">
 
           {/* Top row */}
-          <div className="flex items-center justify-end mb-6">
+          <div className="flex items-center justify-end mb-6 gap-3">
             <div className="flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-3 py-1 text-xs font-medium text-blue-100">
               <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse inline-block" />
               83% Calibration Accuracy
+            </div>
+            <div className="flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-3 py-1.5 text-xs text-blue-100">
+              <span className="font-medium">{user.name}</span>
+              <button
+                onClick={logout}
+                className="ml-1 text-blue-300 hover:text-white transition-colors"
+                title="Sign out"
+              >
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+              </button>
             </div>
           </div>
 
