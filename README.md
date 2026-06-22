@@ -14,6 +14,81 @@ Upload your ad-channel CSVs, configure budgets, and get calibrated revenue forec
 
 ---
 
+## Screenshots
+
+### Step 1 — Upload CSV Data
+Drop all 5 ad-channel CSVs and auto-validate data quality.
+
+![Upload Page](docs/screenshots/01_upload.png)
+
+![Files Loaded](docs/screenshots/01b_files_loaded.png)
+
+### Step 2 — Configure Budget & Horizon
+Set per-channel spend and forecast horizon (30/60/90 days).
+
+![Budget Config](docs/screenshots/02_budget.png)
+
+### Step 3 — Forecast Results
+
+#### P10/P50/P90 Revenue Forecast
+Probabilistic revenue and ROAS ranges with confidence bands.
+
+![Forecast Summary](docs/screenshots/04_forecast_summary.png)
+
+#### Channel Breakdown
+Per-channel revenue, ROAS, elasticity, and R² with expandable campaign-type sub-rows.
+
+![Channel Breakdown](docs/screenshots/05_channel_breakdown.png)
+
+#### Revenue Attribution Waterfall
+How each channel contributes to total P50 forecast revenue.
+
+![Revenue Waterfall](docs/screenshots/06_revenue_waterfall.png)
+
+#### Channel Comparison Radar
+Spider chart comparing channels across 5 dimensions: Elasticity, R², ROAS, Revenue Share, Precision.
+
+![Channel Radar](docs/screenshots/07_channel_radar.png)
+
+#### Diminishing Returns Curve
+Per-channel spend-vs-revenue curve with ROAS and marginal ROAS overlays.
+
+![Diminishing Returns](docs/screenshots/08_diminishing_returns.png)
+
+#### What-If Sensitivity Analysis
+How +/-10–20% spend changes affect each channel's revenue.
+
+![Sensitivity Table](docs/screenshots/09_sensitivity_table.png)
+
+#### Seasonality Heatmap
+Monthly revenue indices per channel with spend timing recommendations.
+
+![Seasonality Heatmap](docs/screenshots/10_seasonality_heatmap.png)
+
+#### Auto-Generated Insights
+Pure-math insight engine surfacing opportunities, risks, and model diagnostics — no AI call needed.
+
+![Auto Insights](docs/screenshots/11_auto_insights.png)
+
+#### Calibration Time Machine
+Holdout backtest proving 83% model accuracy — actual vs predicted P10–P90 band with hit/miss dots.
+
+![Calibration](docs/screenshots/12_calibration.png)
+
+### Step 4 — Simulate & Optimize
+
+#### Budget Scenario Simulation
+5 pre-built scenarios (0.5x–2.0x) showing revenue and ROAS response curves.
+
+![Scenario Chart](docs/screenshots/14_scenario_chart.png)
+
+#### Budget Optimizer
+SLSQP optimization with efficient frontier — finds the best channel allocation.
+
+![Optimizer](docs/screenshots/15_optimizer.png)
+
+---
+
 ## Features
 
 ### Core Forecasting
