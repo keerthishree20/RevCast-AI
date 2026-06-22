@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuth } from "@/context/AuthContext";
+import { useTheme } from "@/context/ThemeContext";
 import AuthPage from "@/components/auth/AuthPage";
 import { useApp } from "@/context/AppContext";
 import FileUploadZone from "@/components/upload/FileUploadZone";
@@ -39,6 +40,7 @@ const PILLS = [
 
 export default function Home() {
   const { user, loading: authLoading, logout } = useAuth();
+  const { theme, toggle: toggleTheme } = useTheme();
   const { step, goToStep, runForecast, runSimulate, loading, error, forecast } = useApp();
 
   if (authLoading) {
@@ -55,20 +57,36 @@ export default function Home() {
     <div className="min-h-screen flex flex-col">
 
       {/* ── Hero banner ───────────────────────────────────────────────── */}
-      <header className="gradient-brand text-white px-6 py-10 shadow-xl">
+      <header className="gradient-brand text-white px-4 sm:px-6 py-6 sm:py-10 shadow-xl">
         <div className="max-w-5xl mx-auto">
 
           {/* Top row */}
-          <div className="flex items-center justify-end mb-6 gap-3">
-            <div className="flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-3 py-1 text-xs font-medium text-blue-100">
+          <div className="flex items-center justify-end mb-4 sm:mb-6 gap-2 sm:gap-3 flex-wrap">
+            <div className="hidden sm:flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-3 py-1 text-xs font-medium text-blue-100">
               <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse inline-block" />
               83% Calibration Accuracy
             </div>
+            {/* Theme toggle */}
+            <button
+              onClick={toggleTheme}
+              className="bg-white/10 border border-white/20 rounded-full p-2 text-blue-100 hover:bg-white/20 transition-colors"
+              title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+            >
+              {theme === "dark" ? (
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+              ) : (
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+              )}
+            </button>
             <div className="flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-3 py-1.5 text-xs text-blue-100">
-              <span className="font-medium">{user.name}</span>
+              <span className="font-medium truncate max-w-[100px] sm:max-w-none">{user.name}</span>
               <button
                 onClick={logout}
-                className="ml-1 text-blue-300 hover:text-white transition-colors"
+                className="ml-1 text-blue-300 hover:text-white transition-colors flex-shrink-0"
                 title="Sign out"
               >
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -79,20 +97,20 @@ export default function Home() {
           </div>
 
           {/* Title */}
-          <div className="flex items-end gap-3 mb-2">
-            <h1 className="text-4xl font-black tracking-tight">RevCast</h1>
-            <span className="text-4xl font-black text-blue-400">AI</span>
+          <div className="flex items-end gap-2 sm:gap-3 mb-2">
+            <h1 className="text-3xl sm:text-4xl font-black tracking-tight">RevCast</h1>
+            <span className="text-3xl sm:text-4xl font-black text-blue-400">AI</span>
           </div>
-          <p className="text-lg text-blue-100 font-light mb-6">
+          <p className="text-sm sm:text-lg text-blue-100 font-light mb-4 sm:mb-6">
             Probabilistic Revenue Forecasting &amp; Budget Optimization for Paid Media
           </p>
 
           {/* Feature pills */}
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-1.5 sm:gap-2">
             {PILLS.map((p) => (
               <span
                 key={p}
-                className="bg-white/10 border border-white/20 text-blue-100 text-xs font-medium px-3 py-1 rounded-full"
+                className="bg-white/10 border border-white/20 text-blue-100 text-[10px] sm:text-xs font-medium px-2 sm:px-3 py-0.5 sm:py-1 rounded-full"
               >
                 {p}
               </span>
@@ -102,42 +120,46 @@ export default function Home() {
       </header>
 
       {/* ── Main content ──────────────────────────────────────────────── */}
-      <main className="flex-1 max-w-5xl mx-auto w-full px-4 py-8">
+      <main className="flex-1 max-w-5xl mx-auto w-full px-3 sm:px-4 py-4 sm:py-8">
 
         {/* Step navigator */}
-        <div className="flex items-center mb-8">
+        <div className="flex items-center mb-6 sm:mb-8 overflow-x-auto pb-2">
           {STEPS.map(({ n, label, desc }, i) => (
-            <div key={n} className="flex items-center flex-1 last:flex-none">
+            <div key={n} className="flex items-center flex-1 last:flex-none min-w-0">
               <button
                 onClick={() => step > n && goToStep(n)}
                 disabled={step <= n}
-                className="flex items-center gap-3 group"
+                className="flex items-center gap-1.5 sm:gap-3 group"
               >
                 {/* Circle */}
-                <div className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 transition-all duration-200 ${
+                <div className={`w-7 h-7 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold flex-shrink-0 transition-all duration-200 ${
                   step === n
                     ? "gradient-btn-primary text-white shadow-lg shadow-blue-200 scale-110"
                     : step > n
                     ? "bg-green-500 text-white"
-                    : "bg-gray-100 text-gray-400"
+                    : "bg-gray-100 text-gray-400 dark:bg-gray-700"
                 }`}>
                   {step > n ? (
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                     </svg>
                   ) : n}
                 </div>
                 {/* Labels */}
                 <div className="hidden sm:block text-left">
-                  <div className={`text-sm font-semibold leading-tight ${step === n ? "text-blue-700" : step > n ? "text-green-700" : "text-gray-400"}`}>
+                  <div className={`text-sm font-semibold leading-tight ${step === n ? "text-blue-700 dark:text-blue-400" : step > n ? "text-green-700 dark:text-green-400" : "text-gray-400"}`}>
                     {label}
                   </div>
                   <div className="text-xs text-gray-400">{desc}</div>
                 </div>
+                {/* Mobile: just show label */}
+                <span className={`sm:hidden text-[10px] font-semibold ${step === n ? "text-blue-700 dark:text-blue-400" : step > n ? "text-green-700 dark:text-green-400" : "text-gray-400"}`}>
+                  {label}
+                </span>
               </button>
               {/* Connector */}
               {i < STEPS.length - 1 && (
-                <div className={`flex-1 mx-3 h-0.5 transition-colors duration-300 ${step > n ? "bg-green-400" : "bg-gray-200"}`} />
+                <div className={`flex-1 mx-1.5 sm:mx-3 h-0.5 transition-colors duration-300 min-w-[16px] ${step > n ? "bg-green-400" : "bg-gray-200 dark:bg-gray-600"}`} />
               )}
             </div>
           ))}
@@ -239,9 +261,9 @@ export default function Home() {
       </main>
 
       {/* ── Footer ───────────────────────────────────────────────────── */}
-      <footer className="border-t border-gray-100 bg-white mt-8 py-4 px-6">
+      <footer className="border-t mt-8 py-4 px-4 sm:px-6 surface">
         <div className="max-w-5xl mx-auto flex items-center justify-between text-xs text-gray-400">
-          <span className="font-semibold text-gray-500">RevCast AI</span>
+          <span className="font-semibold">RevCast AI</span>
           <span>&copy; {new Date().getFullYear()} All rights reserved.</span>
         </div>
       </footer>

@@ -47,7 +47,7 @@ export default function AuthPage() {
       {/* Auth form */}
       <main className="flex-1 flex items-start justify-center px-4 py-12">
         <div className="w-full max-w-md">
-          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-8">
+          <div className="rounded-2xl border shadow-sm p-6 sm:p-8 surface" style={{ background: "var(--card-bg)", borderColor: "var(--card-border)" }}>
             {/* Tab toggle */}
             <div className="flex rounded-lg border border-gray-200 overflow-hidden mb-6">
               <button
@@ -145,7 +145,7 @@ export default function AuthPage() {
             {["P10/P50/P90 Forecasts", "Budget Optimizer", "AI Summary", "Calibration Proof"].map((p) => (
               <span
                 key={p}
-                className="bg-white border border-gray-200 text-gray-500 text-xs font-medium px-3 py-1 rounded-full"
+                className="border text-xs font-medium px-3 py-1 rounded-full surface"
               >
                 {p}
               </span>

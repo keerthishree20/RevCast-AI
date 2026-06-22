@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/context/ThemeContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { AppProvider } from "@/context/AppContext";
 
@@ -13,13 +14,15 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body className={`${inter.className} bg-gray-50 min-h-screen`}>
-        <AuthProvider>
-          <AppProvider>
-            {children}
-          </AppProvider>
-        </AuthProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${inter.className} min-h-screen`} style={{ background: "var(--background)" }}>
+        <ThemeProvider>
+          <AuthProvider>
+            <AppProvider>
+              {children}
+            </AppProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
