@@ -56,7 +56,8 @@ This is called **probabilistic forecasting**, and it's how real financial planni
 | **Data Analyst** | Elasticity models, statistical diagnostics, calibration metrics |
 | **Business Student** | Learn how ad spend translates to revenue using real statistical methods |
 | **Data Scientist** | Full pipeline: OLS, bootstrap, optimization, backtesting |
-| **Hackathon Judge** | A working prototype with 15+ features and verified calibration |
+| **Hackathon Judge** | A working prototype with 20+ features and verified calibration |
+| **Final Year Student** | Full-stack project with tests, auth, database, Docker, cloud deployment — panel-ready |
 
 ---
 
@@ -235,6 +236,20 @@ Open **http://localhost:3000** in your browser.
 
 The app is a **4-step wizard**. You must complete each step in order.
 
+### Step 0: Register / Login
+
+Before accessing the app, you need to create an account:
+
+1. Open the app — you'll see the **Sign In / Create Account** page
+2. Click **"Create Account"** tab
+3. Enter your name, email, and password (min 6 characters)
+4. Click **"Create Account"** — you're automatically logged in
+5. Next time, use **"Sign In"** with your email and password
+
+Your account is stored in the SQLite database and persists across server restarts. A JWT token is saved in your browser's localStorage so you stay logged in.
+
+**Dark Mode:** Click the moon/sun icon in the top-right corner to toggle between light and dark themes. Your preference is saved automatically.
+
 ### Step 1: Upload Data
 
 ![Upload Page](docs/screenshots/01_upload.png)
@@ -265,7 +280,7 @@ The app is a **4-step wizard**. You must complete each step in order.
 
 ### Step 3: Explore Forecast Results
 
-This is the richest step — 11 visualization components. Scroll down to see all of them.
+This is the richest step — 12 visualization components. Scroll down to see all of them.
 
 ![Forecast Summary](docs/screenshots/04_forecast_summary.png)
 
@@ -626,10 +641,43 @@ These insights come from deterministic rules analyzing the forecast response —
 
 **What it returns:** A causal narrative explaining *why* the forecast looks the way it does, specific risk factors, actionable recommendations, and a confidence rating.
 
-### 8.13 Export (PDF/CSV)
+### 8.13 Model Comparison
+**What:** Compare the log-log elasticity model against 3 naive baselines on the same holdout data.
+
+**Baselines tested:**
+- **Naive (Last Value)** — predict next week = last week's revenue
+- **Moving Average (4w)** — predict next week = average of last 4 weeks
+- **Linear Trend** — fit a straight line through time, extrapolate
+
+**What it proves:** The elasticity model beats all baselines on both MAPE (prediction accuracy) and coverage (uncertainty calibration). Baselines ignore the spend-revenue relationship entirely — they can't answer "what if I change my budget?"
+
+**How to read it:** Click "Run Model Comparison" in Step 3. The table shows MAPE % and Coverage % for each model. Bar charts visualize the comparison. The elasticity model (marked "Primary") should have the lowest MAPE and coverage closest to 80%.
+
+### 8.14 Export (PDF/CSV)
 **What:** Download a report of everything currently displayed.
 
 **PDF includes:** Forecast summary, channel breakdowns, simulation results, AI summary. Uses jsPDF with a special `sanitizeForPdf()` function that replaces Unicode characters (like σ) with ASCII equivalents — jsPDF's built-in fonts only support Latin-1.
+
+### 8.15 Dark Mode
+**What:** Full dark theme that switches every component — cards, charts, tables, inputs, tooltips, scrollbars.
+
+**How it works:**
+- Click the moon/sun icon in the header
+- Uses CSS custom properties (`--card-bg`, `--card-border`, `--foreground`, etc.)
+- Tailwind's `darkMode: "class"` strategy — adding `.dark` to `<html>` triggers all overrides
+- Preference saved in `localStorage` and restored on next visit
+- Respects your system preference (OS-level dark mode) on first visit
+
+### 8.16 Mobile Responsive
+**What:** The entire app adapts to phone and tablet screens.
+
+**Key adaptations:**
+- Header compresses: smaller title, compact feature pills, truncated username
+- Step navigator: smaller circles, abbreviated labels, horizontal scroll if needed
+- Charts: responsive containers that scale to screen width
+- Tables: horizontal scroll for sensitivity analysis and comparison tables
+- Cards: reduced padding on small screens
+- Auth page: full-width form with appropriate touch targets
 
 ---
 
@@ -679,12 +727,28 @@ POST /api/summary    → Reads forecast results, calls Gemini API
 
 **Critical:** `/api/forecast` must be called before `/api/simulate`, `/api/optimize`, or `/api/summary`. They all read the fitted channel models from the session.
 
-### 9.4 Frontend — Single React Context
+### 9.4 Frontend — Three React Contexts
 
-All shared state lives in `AppContext.tsx`:
+The app uses 3 context providers, nested in `layout.tsx`:
 
 ```
-AppContext
+ThemeProvider          ← dark/light mode
+  └── AuthProvider     ← JWT token, user info, login/register/logout
+       └── AppProvider ← forecast wizard state
+```
+
+**AuthContext** (`AuthContext.tsx`):
+```
+├── user ({email, name} | null)
+├── token (JWT string | null)
+├── loading (boolean — checking localStorage on mount)
+├── login(email, password)
+├── register(email, name, password)
+└── logout()
+```
+
+**AppContext** (`AppContext.tsx`):
+```
 ├── step (1-4, current wizard step)
 ├── sessionId (UUID from backend)
 ├── ingest (upload response)
@@ -698,17 +762,27 @@ AppContext
 └── error (string | null)
 ```
 
+**ThemeContext** (`ThemeContext.tsx`):
+```
+├── theme ("light" | "dark")
+└── toggle()
+```
+
 Components read from context and render visualizations. API calls are wrapped in typed functions in `api.ts`.
 
 ### 9.5 CORS Configuration
 
-The backend allows any `localhost` port via regex:
-
+**Local development:** The backend allows any `localhost` port via regex:
 ```python
-allow_origin_regex=r"http://(localhost|127\.0\.0\.1)(:\d+)?"
+allow_origin_regex=r"https?://(localhost|127\.0\.0\.1)(:\d+)?"
 ```
 
-This means you can run the frontend on any port without backend changes.
+**Production:** Set the `CORS_ORIGINS` env var to your frontend URL:
+```bash
+CORS_ORIGINS=https://revcast-frontend.onrender.com
+```
+
+This dual approach means local dev works on any port without config, and production only accepts requests from the deployed frontend.
 
 ---
 
@@ -760,7 +834,29 @@ The 10% threshold exists because:
 - Without the threshold, the CV might select λ=0.1 or 0.2 just from noise
 - A wrong λ hurts forecasts more than it helps — it inflates residuals and widens intervals
 
-### 10.5 Extending to Real Data
+### 10.5 Testing Strategy
+
+RevCast AI has 24 automated tests across 4 modules:
+
+```bash
+cd backend
+python -m pytest tests/ -v
+```
+
+**What's tested:**
+
+| Module | Tests | What they verify |
+|--------|-------|-----------------|
+| `test_seasonality.py` | 5 | Dec is highest index, Jan is low, indices average ~1.0, deseasonalization reduces variance |
+| `test_elasticity.py` | 7 | Beta recovered within ±0.15 of truth, R²>0.3, residuals centered, holiday detection, adstock math, conservative lambda=0 |
+| `test_bootstrap.py` | 7 | P10<P50<P90, higher budget→higher revenue, seasonality scaling, all revenues positive, holdout coverage ≥62.5% |
+| `test_api.py` | 5 | Health check, CSV ingest, full flow (ingest→validate→forecast→simulate→calibrate), error handling |
+
+**Key test: `test_holdout_coverage`** — This is the most important test. It holds out 8 weeks, refits the model, forecasts each week, and checks that at least 62.5% of actuals land in the P10-P90 band. This catches regressions in the bootstrap or heteroscedastic scaling.
+
+**Why not 80%?** The test threshold is 62.5% (5/8 weeks) rather than 80% because with only 8 holdout weeks, there's natural variance — a single miss drops coverage by 12.5%. The 62.5% threshold catches real bugs without causing false failures.
+
+### 10.6 Extending to Real Data
 
 To use RevCast AI with real data:
 
@@ -928,6 +1024,13 @@ On Render's free tier:
 | **Campaign type** | A category of ad campaign (e.g., Search, Shopping, Display, Retargeting). |
 | **Horizon** | How far into the future the forecast extends (30, 60, or 90 days). |
 | **Session** | An in-memory object storing all data and models for one user's upload-to-forecast flow. |
+| **JWT** | JSON Web Token — a signed string that proves a user is authenticated without storing state on the server. |
+| **PBKDF2** | Password-Based Key Derivation Function 2 — a slow hash function that makes brute-force password cracking impractical. |
+| **SQLite** | A lightweight file-based database that needs no separate server. Used for user account storage. |
+| **CORS** | Cross-Origin Resource Sharing — browser security that prevents frontend (port 3000) from calling backend (port 8001) unless the backend explicitly allows it. |
+| **Docker** | A containerization tool that packages the app with all dependencies so it runs identically on any machine. |
+| **Render** | A cloud platform (like Heroku) that deploys apps from GitHub. RevCast AI uses Render's Blueprint feature. |
+| **Dark mode** | A UI theme with dark backgrounds and light text, reducing eye strain and saving battery on OLED screens. |
 
 ---
 
