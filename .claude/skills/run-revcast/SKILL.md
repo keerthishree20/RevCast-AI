@@ -24,7 +24,7 @@ timeout 30 bash -c 'until curl -sf http://localhost:8001/health >/dev/null; do s
 
 ## Frontend (Next.js, default port 3000 — but check first)
 
-**Gotcha: port 3000 may already be running a *different* project.** This user has multiple Next.js hackathon projects (e.g. `aerospace-inspection`) that also default to port 3000. Before assuming RevCast is on 3000:
+**Gotcha: port 3000 may already be running a *different* project.** This user has multiple Next.js projects (e.g. `aerospace-inspection`) that also default to port 3000. Before assuming RevCast is on 3000:
 
 ```bash
 curl -s http://localhost:3000 | grep -o '<title>[^<]*</title>'   # or just look at the page content

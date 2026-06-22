@@ -428,7 +428,7 @@ Use `python data/generate_synthetic.py` to create sample files matching these sc
 
 ## Built With
 
-Developed by **KeerthiShree TS** for the AIgnition 3.0 Hackathon.
+Developed by **KeerthiShree TS**.
 
 ---
 

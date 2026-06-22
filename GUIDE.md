@@ -56,7 +56,7 @@ This is called **probabilistic forecasting**, and it's how real financial planni
 | **Data Analyst** | Elasticity models, statistical diagnostics, calibration metrics |
 | **Business Student** | Learn how ad spend translates to revenue using real statistical methods |
 | **Data Scientist** | Full pipeline: OLS, bootstrap, optimization, backtesting |
-| **Hackathon Judge** | A working prototype with 20+ features and verified calibration |
+| **Project Evaluator** | A working prototype with 20+ features and verified calibration |
 | **Final Year Student** | Full-stack project with tests, auth, database, Docker, cloud deployment — panel-ready |
 
 ---
