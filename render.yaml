@@ -15,13 +15,9 @@ services:
       - key: JWT_SECRET
         generateValue: true
       - key: DB_PATH
-        value: /opt/render/project/data/revcast.db
+        value: /tmp/revcast.db
       - key: CORS_ORIGINS
         value: https://revcast-frontend.onrender.com
-    disk:
-      name: revcast-data
-      mountPath: /opt/render/project/data
-      sizeGB: 1
     healthCheckPath: /health
 
   - type: web
