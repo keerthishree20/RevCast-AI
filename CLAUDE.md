@@ -87,3 +87,15 @@ After the optimizer converges, the winning allocation is run back through the *r
 Single React context drives a 4-step wizard (`frontend/src/app/page.tsx`): Upload → Budget → Forecast → Optimize. `AppContext` holds `sessionId`, `forecast`, `simulation`, `summary`, `budget`, `horizon` and exposes the actions that call the typed API wrappers in `frontend/src/lib/api.ts`. The Budget Optimizer panel (`components/optimizer/BudgetOptimizerPanel.tsx`) keeps its own optimizer result in local component state rather than `AppContext` — it's not part of the shared wizard state.
 
 Report export (`frontend/src/lib/export.ts`) builds CSV/PDF client-side from whatever's currently in `AppContext` (forecast + simulation + summary). PDF text must go through `sanitizeForPdf()` before being passed to jsPDF — jsPDF's built-in fonts only support WinAnsi/Latin-1, so unsanitized Unicode (e.g. `σ` in anomaly descriptions) renders as mojibake.
+
+### Frontend analytics components (`frontend/src/components/forecast/`)
+
+Step 3 (Forecast results) renders 11 visualization components. The notable ones beyond the basic summary/breakdown:
+
+- **RevenueWaterfall** — Recharts stacked BarChart with invisible base segments to create a waterfall effect. Shows each channel's P50 contribution to total revenue.
+- **ChannelRadarChart** — Recharts RadarChart comparing channels across 5 normalized dimensions (Elasticity, R², ROAS, Revenue Share, Precision). Precision = inverse of (P90-P10)/P50 spread.
+- **DiminishingReturnsChart** — Recovers `alpha` from `alpha = log(rev_p50) - beta * log(budget)`, then plots `rev = exp(alpha + beta * log(spend))` across 0.2x–3.0x current spend. Dual Y-axis with revenue (left) and ROAS + marginal ROAS (right). Per-channel tabs.
+- **SensitivityTable** — Computes approximate revenue at -20%/-10%/current/+10%/+20% spend using the same recovered alpha+beta. No backend call needed — pure frontend math from the elasticity model.
+- **AutoInsights** — Stateless insight engine that analyzes the `ForecastResponse` and generates prioritized, categorized bullet points (opportunity/risk/info/success). Insights include: best elasticity channel, widest uncertainty band, ROAS gaps, model fit warnings, budget concentration risk, diminishing returns advisory, anomaly counts. No AI call — pure deterministic logic.
+- **CalibrationTimeMachine** — Calls `POST /api/calibration` which holds out the last N weeks per channel, refits the model on everything before, bootstraps single-week forecasts, and returns per-week hit/miss data. Frontend renders a ComposedChart with P10-P90 band (stacked Area), P50 prediction (Line), and actual revenue dots (Line with custom `HitDot` component: green=hit, red=miss). All chart elements use `isAnimationActive={false}` to prevent Recharts clip-path animation artifacts in screenshots.
+- **SeasonalityHeatmap** — Pure HTML table grid (not Recharts) showing monthly revenue indices per channel + blended row. Color-coded from red (low) to green (high) with actionable labels ("Push"/"Pull").

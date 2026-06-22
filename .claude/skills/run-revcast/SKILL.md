@@ -68,7 +68,15 @@ A representative end-to-end flow, since the app is a multi-step wizard with no a
 3. Click **"Upload & Validate"** (don't skip this — files being attached to the input doesn't auto-advance the wizard; this button does).
 4. Wait for `text=Run Forecast`, click it.
 5. Wait for `text=Export Report` (or whatever the step-3 marker is) as proof the forecast pipeline completed.
-6. `page.on('console', ...)` + `page.on('pageerror', ...)` from the start, and check both are empty before declaring success — a blank/partial page can still return HTTP 200.
+6. Step 3 now renders 11 visualization components. Key ones to verify after forecast completes:
+   - "Revenue Attribution Waterfall" — waterfall chart
+   - "Channel Comparison Radar" — spider chart
+   - "Diminishing Returns Curve" — per-channel spend-response chart with tabs
+   - "What-If Sensitivity Analysis" — spend sensitivity table
+   - "Auto-Generated Insights" — auto-generated insight bullets
+   - "Seasonality Heatmap" — monthly index grid
+   - "Calibration Time Machine" — click "Run Calibration Check" to trigger backtest, then verify per-channel charts
+7. `page.on('console', ...)` + `page.on('pageerror', ...)` from the start, and check both are empty before declaring success — a blank/partial page can still return HTTP 200.
 
 If sample data is stale or missing, regenerate it: `python data/generate_synthetic.py` from the repo root.
 
