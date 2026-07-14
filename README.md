@@ -71,6 +71,53 @@ RevCast-AI/
 ├── CLAUDE.md
 └── SKILLS.md
 ```
+# RevCast AI
+
+RevCast AI is a probabilistic revenue forecasting and budget optimization platform for paid media. It uses **Monte Carlo simulation**, **elasticity modeling**, and **AI-generated insights** to forecast revenue, optimize marketing budgets, and quantify uncertainty for Google Ads, Meta Ads, and Microsoft Ads.
+
+🌐 **Live Demo:** https://revcast-frontend.onrender.com
+
+🔗 **GitHub:** https://github.com/keerthishree20/RevCast-AI
+
+## Features
+
+* Revenue forecasting with confidence intervals (P10, P50, P90)
+* Budget optimization across advertising channels
+* Monte Carlo simulation for uncertainty estimation
+* Seasonality and elasticity modeling
+* Interactive dashboards and visualizations
+* AI-generated business insights
+* Export reports (PDF & CSV)
+* User authentication and dark mode
+
+## Tech Stack
+
+* FastAPI
+* Next.js 14
+* React
+* TypeScript
+* Python
+* Monte Carlo Simulation
+* SQLite
+* REST API
+* Tailwind CSS
+* Recharts
+
+## Getting Started
+
+See **GUIDEME.md** for complete installation and setup instructions.
+
+## Documentation
+
+* `GUIDEME.md` – Complete setup and user guide
+* `SKILLS.md` – Technologies used
+* `CLAUDE.md` – AI agent instructions
+
+## Live Demo
+
+https://revcast-frontend.onrender.com
+
+
 
 ## Author
 
