@@ -1,29 +1,17 @@
 # RevCast AI
 
-Probabilistic revenue forecasting and budget optimization platform for paid media. Uses Monte Carlo simulation to generate confidence intervals and AI-generated summaries.
+Probabilistic revenue forecasting and budget optimization platform for paid media. RevCast AI uses **Monte Carlo simulation** to forecast campaign performance, generate confidence intervals, and provide AI-powered insights to support marketing budget decisions.
 
-**Live Demo:** [https://revcast-frontend.onrender.com](https://revcast-frontend.onrender.com)
+🌐 **Live Demo:** https://revcast-frontend.onrender.com
 
 ## Tech Stack
 
-`FastAPI` `Next.js 14` `Python` `TypeScript` `Monte Carlo Simulation` `REST API`
-
-## Getting Started
-
-See [GUIDEME.md](GUIDEME.md) for full setup instructions.
-
-## Skills
-
-See [SKILLS.md](SKILLS.md) for a breakdown of technologies used.
-
----
-*Built by [KeerthiShree TS](https://github.com/keerthishree20)*
-
-# RevCast-AI
-
-**Live Demo:** https://revcast-frontend.onrender.com
-
-RevCast-AI is an AI-powered movie review sentiment analysis application built with **FastAPI**, **Next.js**, and **Machine Learning**.
+* FastAPI
+* Next.js 14
+* Python
+* TypeScript
+* Monte Carlo Simulation
+* REST API
 
 ## Repository
 
@@ -32,71 +20,45 @@ git clone https://github.com/keerthishree20/RevCast-AI.git
 cd RevCast-AI
 ```
 
-## Python Version
+## Prerequisites
 
-Python **3.10+**
+* Python 3.10+
+* Node.js 18+
+* Git
 
-## Install Dependencies
-
-### Backend
+## Backend Setup
 
 ```bash
 cd backend
 pip install -r requirements.txt
-```
-
-### Frontend
-
-```bash
-cd frontend
-npm install
-```
-
-## Run the Application
-
-### Backend
-
-```bash
-cd backend
 uvicorn main:app --reload
 ```
 
-Runs at:
+Backend runs at:
 
 ```
 http://localhost:8000
 ```
 
-### Frontend
+## Frontend Setup
 
 ```bash
 cd frontend
+npm install
 npm run dev
 ```
 
-Runs at:
+Frontend runs at:
 
 ```
 http://localhost:3000
 ```
 
-## Live Application
+## Documentation
 
-https://revcast-frontend.onrender.com
-
-## Hackathon Prediction Pipeline
-
-The automated evaluation command is:
-
-```bash
-./run.sh ./data ./pickle/model.pkl ./output/predictions.csv
-```
-
-where:
-
-* `data/` contains the input dataset.
-* `pickle/model.pkl` contains the trained model.
-* Predictions are written to `output/predictions.csv`.
+* Setup Guide: `GUIDEME.md`
+* Skills & Technologies: `SKILLS.md`
+* AI Agent Instructions: `CLAUDE.md`
 
 ## Project Structure
 
@@ -104,31 +66,16 @@ where:
 RevCast-AI/
 ├── backend/
 ├── frontend/
-├── data/
-├── pickle/
-│   └── model.pkl
-├── src/
-├── output/
-├── run.sh
-├── requirements.txt
 ├── README.md
 ├── GUIDEME.md
 ├── CLAUDE.md
 └── SKILLS.md
 ```
 
-## Technologies Used
-
-* Python
-* FastAPI
-* Next.js
-* React
-* Scikit-learn
-* Pandas
-* NumPy
-
 ## Author
 
 **KeerthiShree T S**
+
+GitHub: https://github.com/keerthishree20
 
 Email: [keerthishreets@gmail.com](mailto:keerthishreets@gmail.com)
