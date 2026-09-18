@@ -230,6 +230,49 @@ Open **http://localhost:3000** in your browser.
 
 > If port 3000 is taken, use `npm run dev -- -p 3010`. The backend accepts any localhost port.
 
+#### Python version on this machine
+
+The system `python3` here is 3.6, which is too old. Render runs 3.11.9, from `backend/runtime.txt`.
+Use a virtual environment built from a newer Python:
+
+```bash
+cd backend
+python3.12 -m venv .venv
+.venv/bin/pip install -r requirements.txt
+.venv/bin/python -m uvicorn main:app --host 0.0.0.0 --port 8001 --reload
+```
+
+#### Backend settings
+
+| variable | default | purpose |
+|---|---|---|
+| `GEMINI_API_KEY` | none | AI summaries only |
+| `JWT_SECRET` | a development value | signs login tokens. **Set a real secret in production** |
+| `DB_PATH` | `backend/revcast.db` | SQLite file for users and saved sessions |
+| `CORS_ORIGINS` | empty | comma-separated extra origins. Localhost on any port is always allowed |
+
+`backend/.env.example` lists only `GEMINI_API_KEY`. The other three are read from the environment
+if set.
+
+#### The standalone model script
+
+`train_model.py` at the repository root is a single-file version of the forecasting pipeline in
+Section 7, for one synthetic channel. It fits the model, bootstraps residuals, and pickles the result
+to `pickle/model.pkl`. The app itself does not use it, and the committed `model.pkl` at the root is
+an earlier output.
+
+It needs scikit-learn, which is kept out of `backend/requirements.txt` because that file is what
+Render installs for the app. The script has its own requirements file:
+
+```bash
+python3.12 -m venv .venv-train
+.venv-train/bin/pip install -r requirements-train.txt
+.venv-train/bin/python train_model.py
+```
+
+It creates `pickle/` next to itself if missing, from any working directory. That folder is
+gitignored.
+
 ---
 
 ## 5. Using the App — Step by Step
