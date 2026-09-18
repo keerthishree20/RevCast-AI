@@ -15,6 +15,8 @@ Output: pickle/model.pkl
 """
 
 import pickle
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 from datetime import date, timedelta
@@ -190,10 +192,15 @@ def main():
         },
     }
 
-    with open("pickle/model.pkl", "wb") as f:
+    # Next to this script, whatever directory it is run from, and created if
+    # missing: on a fresh clone the folder does not exist and open() failed.
+    out_dir = Path(__file__).resolve().parent / "pickle"
+    out_dir.mkdir(exist_ok=True)
+    out_path = out_dir / "model.pkl"
+    with open(out_path, "wb") as f:
         pickle.dump(model_artifact, f)
 
-    print("\nSaved model to pickle/model.pkl")
+    print(f"\nSaved model to {out_path}")
 
 
 if __name__ == "__main__":

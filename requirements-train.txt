@@ -1,0 +1,5 @@
+# For train_model.py only. The app itself installs backend/requirements.txt,
+# which Render uses, so scikit-learn is kept out of it.
+numpy
+pandas
+scikit-learn
