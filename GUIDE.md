@@ -2,6 +2,8 @@
 
 > **Live Demo:** [https://revcast-frontend.onrender.com](https://revcast-frontend.onrender.com) | **GitHub:** [https://github.com/keerthishree20/RevCast-AI](https://github.com/keerthishree20/RevCast-AI)
 
+> **All projects:** [https://github.com/keerthishree20](https://github.com/keerthishree20)
+
 A comprehensive guide to understanding every concept, feature, and technical decision in RevCast AI. Written so anyone — from a business student to a senior data scientist — can follow along.
 
 ---
