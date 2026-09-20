@@ -1,5 +1,7 @@
 # RevCast AI
 
+[![tests](https://github.com/keerthishree20/RevCast-AI/actions/workflows/tests.yml/badge.svg)](https://github.com/keerthishree20/RevCast-AI/actions/workflows/tests.yml)
+
 Probabilistic revenue forecasting and budget optimization platform for paid media. RevCast AI uses **Monte Carlo simulation** to forecast campaign performance, generate confidence intervals, and provide AI-powered insights to support marketing budget decisions.
 
 🌐 **Live Demo:** https://revcast-frontend.onrender.com
